@@ -4,11 +4,56 @@
     box-sizing: border-box;
 }
 
+:root {
+    /* Dark Theme (default) */
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-card: rgba(255,255,255,0.05);
+    --bg-input: rgba(255,255,255,0.1);
+    --bg-hover: rgba(255,255,255,0.08);
+    --text-primary: #eee;
+    --text-secondary: #bbb;
+    --text-muted: #888;
+    --text-dim: #666;
+    --border-color: rgba(255,255,255,0.1);
+    --border-strong: #333;
+    --accent-green: #26de81;
+    --accent-green-bg: rgba(38, 222, 129, 0.2);
+    --accent-blue: #7c9aff;
+    --accent-blue-bg: rgba(74, 105, 189, 0.2);
+    --accent-yellow: #fed330;
+    --accent-yellow-bg: rgba(254, 211, 48, 0.2);
+    --accent-orange: #f97316;
+    --accent-gray: #a5b1c2;
+    --accent-gray-bg: rgba(165, 177, 194, 0.2);
+    --shadow-color: rgba(0,0,0,0.3);
+    --modal-bg: #1a1a2e;
+    --select-bg: #1a1a2e;
+}
+
+[data-theme="light"] {
+    --bg-primary: #f5f7fa;
+    --bg-secondary: #e8ecf1;
+    --bg-card: rgba(255,255,255,0.9);
+    --bg-input: rgba(0,0,0,0.05);
+    --bg-hover: rgba(0,0,0,0.03);
+    --text-primary: #1a1a2e;
+    --text-secondary: #444;
+    --text-muted: #666;
+    --text-dim: #999;
+    --border-color: rgba(0,0,0,0.1);
+    --border-strong: #ddd;
+    --shadow-color: rgba(0,0,0,0.1);
+    --modal-bg: #fff;
+    --select-bg: #fff;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
     min-height: 100vh;
-    color: #eee;
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -20,7 +65,7 @@ body {
 header {
     text-align: center;
     padding: 30px 0;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--border-strong);
     margin-bottom: 30px;
 }
 
@@ -37,10 +82,11 @@ header h1 {
 }
 
 .stat {
-    background: rgba(255,255,255,0.1);
+    background: var(--bg-input);
     padding: 8px 16px;
     border-radius: 20px;
     font-size: 0.9rem;
+    transition: background 0.3s ease;
 }
 
 .filters {
@@ -63,13 +109,15 @@ header h1 {
     padding: 10px 15px;
     border: none;
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: var(--bg-input);
+    color: var(--text-primary);
     font-size: 0.9rem;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 .filter-form select option {
-    background: #1a1a2e;
+    background: var(--select-bg);
+    color: var(--text-primary);
 }
 
 .filter-form button,
@@ -88,14 +136,30 @@ header h1 {
 }
 
 .add-btn {
-    background: #26de81;
-    color: #1a1a2e;
+    background: var(--accent-green);
+    color: var(--bg-primary);
     font-weight: bold;
 }
 
 .add-btn:hover {
     background: #20bf6b;
     transform: scale(1.05);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+    background: var(--bg-input);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    background: var(--bg-hover);
+    transform: scale(1.1);
 }
 
 .action-buttons {
@@ -113,12 +177,12 @@ header h1 {
     gap: 15px;
     margin-bottom: 20px;
     padding-bottom: 10px;
-    border-bottom: 2px solid rgba(255,255,255,0.1);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .group-header h2 {
     font-size: 1.4rem;
-    color: #fff;
+    color: var(--text-primary);
     margin: 0;
 }
 
@@ -138,7 +202,7 @@ header h1 {
 .btn-toggle {
     background: transparent;
     border: none;
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.9rem;
     cursor: pointer;
     padding: 5px 8px;
@@ -146,12 +210,12 @@ header h1 {
 }
 
 .btn-toggle:hover {
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .group-count {
-    background: rgba(255,255,255,0.1);
-    color: #888;
+    background: var(--bg-input);
+    color: var(--text-muted);
     padding: 2px 10px;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -174,6 +238,22 @@ header h1 {
     border-bottom-color: transparent;
 }
 
+/* Drag and Drop */
+.project-card.dragging {
+    opacity: 0.5;
+    transform: scale(1.02);
+}
+
+.project-card.drag-over {
+    border: 2px dashed var(--accent-blue);
+    background: var(--accent-blue-bg);
+}
+
+.group-section.drag-over-group {
+    background: var(--accent-blue-bg);
+    border-radius: 12px;
+}
+
 .modal-small {
     max-width: 400px;
 }
@@ -185,30 +265,35 @@ header h1 {
 }
 
 .project-card {
-    background: rgba(255,255,255,0.05);
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 20px;
-    border-left: 4px solid #666;
-    transition: all 0.3s;
+    border-left: 4px solid var(--text-dim);
+    transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
+    cursor: grab;
+}
+
+.project-card:active {
+    cursor: grabbing;
 }
 
 .project-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px var(--shadow-color);
 }
 
 .project-card.status-active {
-    border-left-color: #26de81;
+    border-left-color: var(--accent-green);
 }
 
 .project-card.status-paused {
-    border-left-color: #fed330;
+    border-left-color: var(--accent-yellow);
 }
 
 .project-card.status-done {
-    border-left-color: #a5b1c2;
+    border-left-color: var(--accent-gray);
 }
 
 .card-header {
@@ -220,11 +305,12 @@ header h1 {
 
 .card-header h3 {
     font-size: 1.2rem;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .category-badge {
-    background: rgba(74, 105, 189, 0.3);
+    background: var(--accent-blue-bg);
+    color: var(--accent-blue);
     padding: 4px 12px;
     border-radius: 12px;
     font-size: 0.75rem;
@@ -232,14 +318,14 @@ header h1 {
 }
 
 .path {
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.85rem;
     margin-bottom: 10px;
     word-break: break-all;
 }
 
 .description {
-    color: #bbb;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     margin-bottom: 15px;
     line-height: 1.4;
@@ -253,8 +339,8 @@ header h1 {
 }
 
 .tech {
-    background: rgba(38, 222, 129, 0.2);
-    color: #26de81;
+    background: var(--accent-green-bg);
+    color: var(--accent-green);
     padding: 4px 10px;
     border-radius: 6px;
     font-size: 0.75rem;
@@ -269,15 +355,23 @@ header h1 {
 }
 
 .tag {
-    background: rgba(74, 105, 189, 0.2);
-    color: #7c9aff;
+    background: var(--accent-blue-bg);
+    color: var(--accent-blue);
     padding: 4px 10px;
     border-radius: 6px;
     font-size: 0.75rem;
 }
 
+/* Search Highlight */
+.highlight {
+    background: var(--accent-yellow-bg);
+    color: var(--accent-yellow);
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
 .git-info {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--bg-hover);
     border-radius: 8px;
     padding: 10px 12px;
     margin-bottom: 15px;
@@ -292,17 +386,17 @@ header h1 {
 }
 
 .git-icon {
-    color: #f97316;
+    color: var(--accent-orange);
     font-weight: bold;
 }
 
 .branch-name {
-    color: #f97316;
+    color: var(--accent-orange);
     font-weight: 500;
 }
 
 .git-dirty {
-    color: #fbbf24;
+    color: var(--accent-yellow);
     font-size: 0.6rem;
 }
 
@@ -311,7 +405,7 @@ header h1 {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.75rem;
 }
 
@@ -323,14 +417,14 @@ header h1 {
 }
 
 .commit-date {
-    color: #666;
+    color: var(--text-dim);
     white-space: nowrap;
 }
 
 .git-remote {
     display: inline-block;
     margin-top: 8px;
-    color: #7c9aff;
+    color: var(--accent-blue);
     text-decoration: none;
     font-size: 0.75rem;
 }
@@ -388,7 +482,7 @@ header h1 {
     justify-content: space-between;
     align-items: center;
     padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid var(--border-color);
     margin-top: auto;
 }
 
@@ -400,13 +494,14 @@ header h1 {
     padding: 6px 10px;
     border: none;
     border-radius: 6px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: var(--bg-input);
+    color: var(--text-primary);
     font-size: 0.8rem;
 }
 
 .card-manage select option {
-    background: #1a1a2e;
+    background: var(--select-bg);
+    color: var(--text-primary);
 }
 
 .manage-buttons {
@@ -455,16 +550,28 @@ header h1 {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    opacity: 1;
 }
 
 .modal-content {
-    background: #1a1a2e;
+    background: var(--modal-bg);
     padding: 30px;
     border-radius: 16px;
     width: 90%;
     max-width: 500px;
     max-height: 90vh;
     overflow-y: auto;
+    transform: scale(0.9) translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal.show .modal-content {
+    transform: scale(1) translateY(0);
 }
 
 .modal-content h2 {
@@ -486,7 +593,7 @@ header h1 {
     display: block;
     margin-top: 15px;
     margin-bottom: 5px;
-    color: #aaa;
+    color: var(--text-muted);
     font-size: 0.9rem;
 }
 
@@ -497,9 +604,48 @@ header h1 {
     padding: 10px;
     border: none;
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: var(--bg-input);
+    color: var(--text-primary);
     font-size: 0.95rem;
+}
+
+.modal-content select option {
+    background: var(--select-bg);
+    color: var(--text-primary);
+}
+
+/* Tag Autocomplete */
+.autocomplete-wrapper {
+    position: relative;
+}
+
+.autocomplete-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--modal-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1001;
+    display: none;
+}
+
+.autocomplete-list.show {
+    display: block;
+}
+
+.autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.autocomplete-item:hover,
+.autocomplete-item.selected {
+    background: var(--bg-input);
 }
 
 .path-input-group {
@@ -535,8 +681,8 @@ header h1 {
     width: 100%;
     margin-top: 25px;
     padding: 12px;
-    background: #26de81;
-    color: #1a1a2e;
+    background: var(--accent-green);
+    color: var(--bg-primary);
     border: none;
     border-radius: 8px;
     font-size: 1rem;
@@ -547,6 +693,7 @@ header h1 {
 
 .submit-btn:hover {
     background: #20bf6b;
+    transform: translateY(-2px);
 }
 
 /* Card Link */
@@ -557,7 +704,7 @@ header h1 {
 }
 
 .card-link:hover h3 {
-    color: #7c9aff;
+    color: var(--accent-blue);
 }
 
 /* Detail Page */
@@ -565,11 +712,17 @@ header h1 {
     margin-bottom: 30px;
 }
 
+.detail-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
 .back-btn {
     display: inline-block;
-    color: #7c9aff;
+    color: var(--accent-blue);
     text-decoration: none;
-    margin-bottom: 15px;
     font-size: 0.9rem;
 }
 
@@ -596,18 +749,18 @@ header h1 {
 }
 
 .status-badge.status-active {
-    background: rgba(38, 222, 129, 0.2);
-    color: #26de81;
+    background: var(--accent-green-bg);
+    color: var(--accent-green);
 }
 
 .status-badge.status-paused {
-    background: rgba(254, 211, 48, 0.2);
-    color: #fed330;
+    background: var(--accent-yellow-bg);
+    color: var(--accent-yellow);
 }
 
 .status-badge.status-done {
-    background: rgba(165, 177, 194, 0.2);
-    color: #a5b1c2;
+    background: var(--accent-gray-bg);
+    color: var(--accent-gray);
 }
 
 .detail-content {
@@ -617,7 +770,7 @@ header h1 {
 }
 
 .detail-section {
-    background: rgba(255,255,255,0.05);
+    background: var(--bg-card);
     border-radius: 16px;
     padding: 20px;
     margin-bottom: 20px;
@@ -626,8 +779,8 @@ header h1 {
 .detail-section h2 {
     font-size: 1.1rem;
     margin-bottom: 15px;
-    color: #aaa;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
 }
 
@@ -639,21 +792,21 @@ header h1 {
 
 .info-item label {
     font-size: 0.8rem;
-    color: #888;
+    color: var(--text-muted);
     display: block;
     margin-bottom: 5px;
 }
 
 .info-item p {
     margin: 0;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .path-text {
     word-break: break-all;
     font-family: monospace;
     font-size: 0.9rem;
-    background: rgba(0,0,0,0.2);
+    background: var(--bg-hover);
     padding: 8px 12px;
     border-radius: 6px;
 }
@@ -665,8 +818,8 @@ header h1 {
 }
 
 .tech-large {
-    background: rgba(38, 222, 129, 0.2);
-    color: #26de81;
+    background: var(--accent-green-bg);
+    color: var(--accent-green);
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -680,8 +833,8 @@ header h1 {
 }
 
 .tag-large {
-    background: rgba(74, 105, 189, 0.2);
-    color: #7c9aff;
+    background: var(--accent-blue-bg);
+    color: var(--accent-blue);
     padding: 8px 16px;
     border-radius: 8px;
     font-size: 0.9rem;
@@ -695,24 +848,24 @@ header h1 {
 
 .git-detail-item label {
     font-size: 0.8rem;
-    color: #888;
+    color: var(--text-muted);
     display: block;
     margin-bottom: 5px;
 }
 
 .git-detail-item p {
     margin: 0;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .branch-name-large {
-    color: #f97316;
+    color: var(--accent-orange);
     font-weight: 500;
 }
 
 .git-dirty-badge {
-    background: rgba(251, 191, 36, 0.2);
-    color: #fbbf24;
+    background: var(--accent-yellow-bg);
+    color: var(--accent-yellow);
     padding: 4px 10px;
     border-radius: 12px;
     font-size: 0.75rem;
@@ -722,12 +875,12 @@ header h1 {
 .commit-date-large {
     display: block;
     font-size: 0.8rem;
-    color: #666;
+    color: var(--text-dim);
     margin-top: 5px;
 }
 
 .git-link {
-    color: #7c9aff;
+    color: var(--accent-blue);
     text-decoration: none;
     word-break: break-all;
 }
@@ -746,7 +899,7 @@ header h1 {
 }
 
 .commit-item {
-    background: rgba(0, 0, 0, 0.2);
+    background: var(--bg-hover);
     border-radius: 8px;
     padding: 12px 15px;
     border-left: 3px solid #4a69bd;
@@ -762,8 +915,8 @@ header h1 {
 
 .commit-hash {
     font-family: monospace;
-    background: rgba(74, 105, 189, 0.3);
-    color: #7c9aff;
+    background: var(--accent-blue-bg);
+    color: var(--accent-blue);
     padding: 3px 8px;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -771,18 +924,18 @@ header h1 {
 }
 
 .commit-author {
-    color: #26de81;
+    color: var(--accent-green);
     font-size: 0.85rem;
 }
 
 .commit-time {
-    color: #888;
+    color: var(--text-muted);
     font-size: 0.8rem;
     margin-left: auto;
 }
 
 .commit-message {
-    color: #ddd;
+    color: var(--text-secondary);
     font-size: 0.9rem;
     line-height: 1.4;
     word-break: break-word;
@@ -842,7 +995,7 @@ header h1 {
 
 .manage-form label {
     font-size: 0.8rem;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 5px;
 }
 
@@ -853,9 +1006,14 @@ header h1 {
     padding: 10px;
     border: none;
     border-radius: 8px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
+    background: var(--bg-input);
+    color: var(--text-primary);
     font-size: 0.9rem;
+}
+
+.manage-form select option {
+    background: var(--select-bg);
+    color: var(--text-primary);
 }
 
 .manage-form textarea {
@@ -865,7 +1023,7 @@ header h1 {
 .delete-form {
     margin-top: 20px;
     padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid var(--border-color);
 }
 
 .delete-btn {
@@ -902,4 +1060,70 @@ header h1 {
     .filter-form {
         width: 100%;
     }
+}
+
+/* Loading Animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    border-top-color: var(--accent-blue);
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Fade In Animation */
+.fade-in {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide In Animation for Cards */
+.project-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Smooth scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-dim);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }

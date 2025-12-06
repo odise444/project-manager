@@ -47,6 +47,7 @@
             </form>
 
             <div class="action-buttons">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
                 <button class="add-btn" onclick="openGroupModal()">+ Group</button>
                 <button class="add-btn" onclick="openModal()">+ Project</button>
             </div>
@@ -202,12 +203,40 @@
     </div>
 
     <script>
+        // ============ Theme Toggle ============
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+
+        function updateThemeIcon(theme) {
+            const btn = document.querySelector('.theme-toggle');
+            if (btn) btn.textContent = theme === 'light' ? '☀️' : '🌙';
+        }
+
+        // ============ Modal Functions ============
+        function showModal(modal) {
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('show'), 10);
+        }
+
+        function hideModal(modal) {
+            modal.classList.remove('show');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
         function openModal() {
-            document.getElementById('addModal').style.display = 'flex';
+            showModal(document.getElementById('addModal'));
         }
+
         function closeModal() {
-            document.getElementById('addModal').style.display = 'none';
+            hideModal(document.getElementById('addModal'));
         }
+
         async function selectFolder() {
             const response = await fetch('/browse-folder');
             const data = await response.json();
@@ -229,24 +258,24 @@
             document.getElementById('editTags').value = tags;
             document.getElementById('editGitUrl').value = gitUrl;
             document.getElementById('editForm').action = '/update/' + encodeURIComponent(name);
-            document.getElementById('editModal').style.display = 'flex';
+            showModal(document.getElementById('editModal'));
         }
 
         function closeEditModal() {
-            document.getElementById('editModal').style.display = 'none';
+            hideModal(document.getElementById('editModal'));
         }
 
         function openGroupModal() {
-            document.getElementById('groupModal').style.display = 'flex';
+            showModal(document.getElementById('groupModal'));
         }
 
         function closeGroupModal() {
-            document.getElementById('groupModal').style.display = 'none';
+            hideModal(document.getElementById('groupModal'));
         }
 
+        // ============ Group Toggle ============
         function toggleGroup(groupId) {
             const section = document.getElementById(groupId);
-            const content = section.querySelector('.group-content');
             const btn = section.querySelector('.btn-toggle');
 
             if (section.classList.contains('collapsed')) {
@@ -260,23 +289,180 @@
             }
         }
 
-        // 페이지 로드시 저장된 접힘 상태 복원
+        // ============ Drag and Drop ============
+        let draggedCard = null;
+
+        function initDragAndDrop() {
+            document.querySelectorAll('.project-card').forEach(card => {
+                card.setAttribute('draggable', 'true');
+
+                card.addEventListener('dragstart', (e) => {
+                    draggedCard = card;
+                    card.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                card.addEventListener('dragend', () => {
+                    card.classList.remove('dragging');
+                    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+                    draggedCard = null;
+                });
+
+                card.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (draggedCard !== card) card.classList.add('drag-over');
+                });
+
+                card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+
+                card.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    card.classList.remove('drag-over');
+                    if (draggedCard && draggedCard !== card) {
+                        const grid = card.parentElement;
+                        const cards = Array.from(grid.children);
+                        const draggedIdx = cards.indexOf(draggedCard);
+                        const targetIdx = cards.indexOf(card);
+                        if (draggedIdx < targetIdx) card.after(draggedCard);
+                        else card.before(draggedCard);
+                        saveProjectOrder(grid);
+                    }
+                });
+            });
+        }
+
+        function saveProjectOrder(grid) {
+            const order = Array.from(grid.querySelectorAll('.project-card')).map(card =>
+                card.querySelector('.card-header h3').textContent
+            );
+            const groupSection = grid.closest('.group-section');
+            const groupId = groupSection ? groupSection.id : 'ungrouped';
+            localStorage.setItem('order-' + groupId, JSON.stringify(order));
+        }
+
+        // ============ Search Highlight ============
+        function highlightSearch() {
+            const searchTerm = new URLSearchParams(window.location.search).get('search');
+            if (!searchTerm) return;
+
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            document.querySelectorAll('.project-card').forEach(card => {
+                const title = card.querySelector('.card-header h3');
+                const desc = card.querySelector('.description');
+                if (title) title.innerHTML = title.textContent.replace(regex, '<span class="highlight">$1</span>');
+                if (desc) desc.innerHTML = desc.textContent.replace(regex, '<span class="highlight">$1</span>');
+                card.querySelectorAll('.tag').forEach(tag => {
+                    tag.innerHTML = tag.textContent.replace(regex, '<span class="highlight">$1</span>');
+                });
+            });
+        }
+
+        // ============ Tag Autocomplete ============
+        const allTags = [{% for p in projects %}{% for tag in p.tags %}"{{ tag }}",{% endfor %}{% endfor %}];
+        const uniqueTags = [...new Set(allTags)];
+
+        function initTagAutocomplete() {
+            ['projectTags', 'editTags'].forEach(id => {
+                const input = document.getElementById(id);
+                if (!input) return;
+
+                const wrapper = document.createElement('div');
+                wrapper.className = 'autocomplete-wrapper';
+                input.parentNode.insertBefore(wrapper, input);
+                wrapper.appendChild(input);
+
+                const list = document.createElement('div');
+                list.className = 'autocomplete-list';
+                wrapper.appendChild(list);
+
+                let selectedIndex = -1;
+
+                input.addEventListener('input', () => {
+                    const value = input.value;
+                    const lastComma = value.lastIndexOf(',');
+                    const currentTag = value.substring(lastComma + 1).trim().toLowerCase();
+
+                    if (currentTag.length < 1) { list.classList.remove('show'); return; }
+
+                    const existingTags = value.substring(0, lastComma + 1).split(',').map(t => t.trim().toLowerCase());
+                    const filtered = uniqueTags.filter(tag =>
+                        tag.toLowerCase().includes(currentTag) && !existingTags.includes(tag.toLowerCase())
+                    ).slice(0, 5);
+
+                    if (filtered.length === 0) { list.classList.remove('show'); return; }
+
+                    list.innerHTML = filtered.map((tag, i) =>
+                        `<div class="autocomplete-item${i === selectedIndex ? ' selected' : ''}" data-tag="${tag}">${tag}</div>`
+                    ).join('');
+                    list.classList.add('show');
+                    selectedIndex = -1;
+
+                    list.querySelectorAll('.autocomplete-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            selectTag(input, item.dataset.tag);
+                            list.classList.remove('show');
+                        });
+                    });
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    const items = list.querySelectorAll('.autocomplete-item');
+                    if (!list.classList.contains('show') || items.length === 0) return;
+
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                        items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        selectedIndex = Math.max(selectedIndex - 1, 0);
+                        items.forEach((item, i) => item.classList.toggle('selected', i === selectedIndex));
+                    } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                        e.preventDefault();
+                        selectTag(input, items[selectedIndex].dataset.tag);
+                        list.classList.remove('show');
+                    } else if (e.key === 'Escape') {
+                        list.classList.remove('show');
+                    }
+                });
+
+                input.addEventListener('blur', () => setTimeout(() => list.classList.remove('show'), 200));
+            });
+        }
+
+        function selectTag(input, tag) {
+            const value = input.value;
+            const lastComma = value.lastIndexOf(',');
+            input.value = (lastComma >= 0 ? value.substring(0, lastComma + 1) + ' ' : '') + tag + ', ';
+            input.focus();
+        }
+
+        // ============ Initialization ============
         document.addEventListener('DOMContentLoaded', function() {
+            // Theme
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            // Group collapse state
             document.querySelectorAll('.group-section').forEach(section => {
                 if (localStorage.getItem('collapsed-' + section.id) === 'true') {
                     section.classList.add('collapsed');
                     section.querySelector('.btn-toggle').textContent = '▶';
                 }
             });
+
+            // Init features
+            initDragAndDrop();
+            highlightSearch();
+            initTagAutocomplete();
         });
 
+        // Modal backdrop click
         window.onclick = function(event) {
-            const modals = ['addModal', 'editModal', 'groupModal'];
-            modals.forEach(id => {
+            ['addModal', 'editModal', 'groupModal'].forEach(id => {
                 const modal = document.getElementById(id);
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
+                if (event.target === modal) hideModal(modal);
             });
         }
     </script>
