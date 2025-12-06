@@ -1,0 +1,857 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    color: #eee;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 30px 0;
+    border-bottom: 1px solid #333;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.stat {
+    background: rgba(255,255,255,0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+}
+
+.filters {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.filter-form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.filter-form select,
+.filter-form input {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.filter-form select option {
+    background: #1a1a2e;
+}
+
+.filter-form button,
+.add-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.filter-form button {
+    background: #4a69bd;
+    color: white;
+}
+
+.add-btn {
+    background: #26de81;
+    color: #1a1a2e;
+    font-weight: bold;
+}
+
+.add-btn:hover {
+    background: #20bf6b;
+    transform: scale(1.05);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.group-section {
+    margin-bottom: 40px;
+}
+
+.group-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+}
+
+.group-header h2 {
+    font-size: 1.4rem;
+    color: #fff;
+    margin: 0;
+}
+
+.btn-delete-group {
+    background: transparent;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: all 0.2s;
+}
+
+.btn-delete-group:hover {
+    opacity: 1;
+}
+
+.modal-small {
+    max-width: 400px;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.project-card {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    border-left: 4px solid #666;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.project-card.status-active {
+    border-left-color: #26de81;
+}
+
+.project-card.status-paused {
+    border-left-color: #fed330;
+}
+
+.project-card.status-done {
+    border-left-color: #a5b1c2;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.card-header h3 {
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.category-badge {
+    background: rgba(74, 105, 189, 0.3);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.path {
+    color: #888;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    word-break: break-all;
+}
+
+.description {
+    color: #bbb;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.tech-stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+}
+
+.tech {
+    background: rgba(38, 222, 129, 0.2);
+    color: #26de81;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 15px;
+}
+
+.tag {
+    background: rgba(74, 105, 189, 0.2);
+    color: #7c9aff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+.git-info {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    font-size: 0.8rem;
+}
+
+.git-branch {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.git-icon {
+    color: #f97316;
+    font-weight: bold;
+}
+
+.branch-name {
+    color: #f97316;
+    font-weight: 500;
+}
+
+.git-dirty {
+    color: #fbbf24;
+    font-size: 0.6rem;
+}
+
+.git-commit {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: #888;
+    font-size: 0.75rem;
+}
+
+.commit-msg {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.commit-date {
+    color: #666;
+    white-space: nowrap;
+}
+
+.git-remote {
+    display: inline-block;
+    margin-top: 8px;
+    color: #7c9aff;
+    text-decoration: none;
+    font-size: 0.75rem;
+}
+
+.git-remote:hover {
+    text-decoration: underline;
+}
+
+.status-indicator {
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.btn {
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+}
+
+.btn-vscode {
+    background: #007acc;
+    color: white;
+}
+
+.btn-terminal {
+    background: #333;
+    color: white;
+}
+
+.btn-explorer {
+    background: #e58e26;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+}
+
+.card-manage {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: auto;
+}
+
+.inline-form {
+    display: inline;
+}
+
+.card-manage select {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 0.8rem;
+}
+
+.card-manage select option {
+    background: #1a1a2e;
+}
+
+.manage-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.btn-edit {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s;
+}
+
+.btn-edit:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.btn-delete {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s;
+}
+
+.btn-delete:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #1a1a2e;
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+}
+
+.close {
+    float: right;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.close:hover {
+    opacity: 1;
+}
+
+.modal-content label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.modal-content input,
+.modal-content select,
+.modal-content textarea {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 0.95rem;
+}
+
+.path-input-group {
+    display: flex;
+    gap: 8px;
+}
+
+.path-input-group input {
+    flex: 1;
+}
+
+.browse-btn {
+    padding: 10px 15px;
+    background: #4a69bd;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.browse-btn:hover {
+    background: #3c5aa6;
+}
+
+.modal-content textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px;
+    background: #26de81;
+    color: #1a1a2e;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.submit-btn:hover {
+    background: #20bf6b;
+}
+
+/* Card Link */
+.card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.card-link:hover h3 {
+    color: #7c9aff;
+}
+
+/* Detail Page */
+.detail-header {
+    margin-bottom: 30px;
+}
+
+.back-btn {
+    display: inline-block;
+    color: #7c9aff;
+    text-decoration: none;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.back-btn:hover {
+    text-decoration: underline;
+}
+
+.detail-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.detail-title h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.status-badge.status-active {
+    background: rgba(38, 222, 129, 0.2);
+    color: #26de81;
+}
+
+.status-badge.status-paused {
+    background: rgba(254, 211, 48, 0.2);
+    color: #fed330;
+}
+
+.status-badge.status-done {
+    background: rgba(165, 177, 194, 0.2);
+    color: #a5b1c2;
+}
+
+.detail-content {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 30px;
+}
+
+.detail-section {
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.detail-section h2 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    color: #aaa;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+.info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.info-item label {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.info-item p {
+    margin: 0;
+    color: #fff;
+}
+
+.path-text {
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.2);
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+
+.tech-stack-large {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tech-large {
+    background: rgba(38, 222, 129, 0.2);
+    color: #26de81;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.tags-large {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tag-large {
+    background: rgba(74, 105, 189, 0.2);
+    color: #7c9aff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.git-detail {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.git-detail-item label {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.git-detail-item p {
+    margin: 0;
+    color: #fff;
+}
+
+.branch-name-large {
+    color: #f97316;
+    font-weight: 500;
+}
+
+.git-dirty-badge {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-left: 10px;
+}
+
+.commit-date-large {
+    display: block;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.git-link {
+    color: #7c9aff;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.git-link:hover {
+    text-decoration: underline;
+}
+
+/* Git History */
+.git-history {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.commit-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 12px 15px;
+    border-left: 3px solid #4a69bd;
+}
+
+.commit-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.commit-hash {
+    font-family: monospace;
+    background: rgba(74, 105, 189, 0.3);
+    color: #7c9aff;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.commit-author {
+    color: #26de81;
+    font-size: 0.85rem;
+}
+
+.commit-time {
+    color: #888;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+.commit-message {
+    color: #ddd;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.action-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    transform: translateX(5px);
+}
+
+.action-btn.btn-vscode {
+    background: #007acc;
+}
+
+.action-btn.btn-terminal {
+    background: #333;
+}
+
+.action-btn.btn-explorer {
+    background: #e58e26;
+}
+
+.action-btn.btn-github {
+    background: #24292e;
+}
+
+.action-icon {
+    font-size: 1.2rem;
+}
+
+.manage-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.manage-form label {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+.manage-form select,
+.manage-form input,
+.manage-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+.manage-form textarea {
+    resize: vertical;
+}
+
+.delete-form {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.delete-btn {
+    width: 100%;
+    padding: 12px;
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    background: rgba(220, 53, 69, 0.4);
+}
+
+@media (max-width: 900px) {
+    .detail-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .filters {
+        flex-direction: column;
+    }
+
+    .filter-form {
+        width: 100%;
+    }
+}

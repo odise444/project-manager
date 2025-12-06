@@ -1,0 +1,61 @@
+groups:
+- 발전소 계산서 업무 자동화
+projects:
+- category: personal
+  description: 통합 프로젝트 관리
+  git_url: ''
+  name: proj-manager
+  path: D:\WorkSpace\python\proj-manager
+  status: active
+  tags:
+  - WorkFlower
+- category: personal
+  description: ''
+  git_url: ''
+  group: ''
+  name: ai-coin-trader
+  path: D:\WorkSpace\python\ai-coin-trader
+  status: done
+  tags: []
+- category: personal
+  description: ''
+  git_url: https://github.com/odise444/slack-barobill.git
+  group: 발전소 계산서 업무 자동화
+  name: slack-barobill
+  path: D:\WorkSpace\python\slack-barobill
+  status: active
+  tags: []
+- category: personal
+  description: ''
+  git_url: https://github.com/odise444/auto_rec_req.git
+  group: 발전소 계산서 업무 자동화
+  name: auto_rec_req
+  path: D:\WorkSpace\python\auto_rec_req
+  status: active
+  tags: []
+- category: personal
+  description: '평촌 푸르지오 카페 키오스크 '
+  git_url: https://github.com/odise444/kiosk-app.git
+  group: ''
+  name: kiosk-app
+  path: D:\WorkSpace\vue\kiosk-app
+  status: active
+  tags: []
+- category: personal
+  description: ''
+  git_url: ''
+  name: tmbaro-astro
+  path: D:\WorkSpace\web\tmbaro\tmbaro-astro
+  status: done
+  tags: []
+- category: personal
+  description: ''
+  git_url: ''
+  group: ''
+  name: floor-planner
+  path: D:\WorkSpace\vue\floor-planner
+  status: active
+  tags:
+  - TypeScript
+  - JavaScript/Node.js
+  - Vue.js

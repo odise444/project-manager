@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗂️ Project Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗂️ My Projects</h1>
+            <div class="stats">
+                <span class="stat">📁 Total: {{ stats.total }}</span>
+                <span class="stat active">🟢 Active: {{ stats.active }}</span>
+                <span class="stat paused">🟡 Paused: {{ stats.paused }}</span>
+                <span class="stat done">⚪ Done: {{ stats.done }}</span>
+            </div>
+        </header>
+
+        <!-- 필터 -->
+        <div class="filters">
+            <form method="get" class="filter-form">
+                <select name="group" onchange="this.form.submit()">
+                    <option value="all" {% if current_group == 'all' %}selected{% endif %}>All Groups</option>
+                    {% for g in groups %}
+                    <option value="{{ g }}" {% if current_group == g %}selected{% endif %}>📁 {{ g }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="category" onchange="this.form.submit()">
+                    <option value="all" {% if current_category == 'all' %}selected{% endif %}>All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+
+                <select name="status" onchange="this.form.submit()">
+                    <option value="all" {% if current_status == 'all' %}selected{% endif %}>All Status</option>
+                    <option value="active" {% if current_status == 'active' %}selected{% endif %}>🟢 Active</option>
+                    <option value="paused" {% if current_status == 'paused' %}selected{% endif %}>🟡 Paused</option>
+                    <option value="done" {% if current_status == 'done' %}selected{% endif %}>⚪ Done</option>
+                </select>
+
+                <input type="text" name="search" placeholder="🔍 Search..." value="{{ search }}">
+                <button type="submit">Search</button>
+            </form>
+
+            <div class="action-buttons">
+                <button class="add-btn" onclick="openGroupModal()">+ Group</button>
+                <button class="add-btn" onclick="openModal()">+ Project</button>
+            </div>
+        </div>
+
+        <!-- 그룹별 프로젝트 -->
+        {% for group_name, group_projects in grouped_projects.items() %}
+        <div class="group-section">
+            <div class="group-header">
+                <h2>📁 {{ group_name }}</h2>
+                <form method="post" action="/delete-group/{{ group_name }}" class="inline-form">
+                    <button type="submit" class="btn-delete-group" onclick="return confirm('Delete group {{ group_name }}? Projects will be ungrouped.')">🗑️</button>
+                </form>
+            </div>
+            <div class="project-grid">
+                {% for project in group_projects %}
+                {% include '_project_card.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+
+        <!-- 그룹 없는 프로젝트 -->
+        {% if ungrouped %}
+        <div class="group-section">
+            <div class="group-header">
+                <h2>📂 Ungrouped</h2>
+            </div>
+            <div class="project-grid">
+                {% for project in ungrouped %}
+                {% include '_project_card.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Add Modal -->
+    <div id="addModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Add New Project</h2>
+            <form method="post" action="/add">
+                <label>Path</label>
+                <div class="path-input-group">
+                    <input type="text" name="path" id="projectPath" required placeholder="D:\WorkSpace\my-project">
+                    <button type="button" class="browse-btn" onclick="selectFolder()">📁 Browse</button>
+                </div>
+
+                <label>Name</label>
+                <input type="text" name="name" id="projectName" required>
+                
+                <label>Category</label>
+                <select name="category">
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="study">Study</option>
+                </select>
+                
+                <label>Status</label>
+                <select name="status">
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="done">Done</option>
+                </select>
+
+                <label>Group</label>
+                <select name="group">
+                    <option value="">No Group</option>
+                    {% for g in groups %}
+                    <option value="{{ g }}">{{ g }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Tags (comma separated)</label>
+                <input type="text" name="tags" id="projectTags" placeholder="ESP32, BMS, FreeRTOS">
+                
+                <label>Description</label>
+                <textarea name="description" rows="3"></textarea>
+                
+                <label>Git URL (optional)</label>
+                <input type="text" name="git_url" placeholder="https://github.com/...">
+                
+                <button type="submit" class="submit-btn">Add Project</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Project</h2>
+            <form method="post" id="editForm">
+                <label>Name</label>
+                <input type="text" id="editName" disabled>
+
+                <label>Path</label>
+                <input type="text" id="editPath" disabled>
+
+                <label>Category</label>
+                <select name="category" id="editCategory">
+                    <option value="personal">Personal</option>
+                    <option value="work">Work</option>
+                    <option value="study">Study</option>
+                </select>
+
+                <label>Status</label>
+                <select name="status" id="editStatus">
+                    <option value="active">Active</option>
+                    <option value="paused">Paused</option>
+                    <option value="done">Done</option>
+                </select>
+
+                <label>Group</label>
+                <select name="group" id="editGroup">
+                    <option value="">No Group</option>
+                    {% for g in groups %}
+                    <option value="{{ g }}">{{ g }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Tags (comma separated)</label>
+                <input type="text" name="tags" id="editTags">
+
+                <label>Description</label>
+                <textarea name="description" id="editDescription" rows="3"></textarea>
+
+                <label>Git URL (optional)</label>
+                <input type="text" name="git_url" id="editGitUrl">
+
+                <button type="submit" class="submit-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Group Modal -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content modal-small">
+            <span class="close" onclick="closeGroupModal()">&times;</span>
+            <h2>Add New Group</h2>
+            <form method="post" action="/add-group">
+                <label>Group Name</label>
+                <input type="text" name="group_name" required placeholder="e.g., Work Projects, Side Projects">
+
+                <button type="submit" class="submit-btn">Add Group</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('addModal').style.display = 'none';
+        }
+        async function selectFolder() {
+            const response = await fetch('/browse-folder');
+            const data = await response.json();
+            if (data.path) {
+                document.getElementById('projectPath').value = data.path;
+                document.getElementById('projectName').value = data.name;
+                if (data.tech_stack && data.tech_stack.length > 0) {
+                    document.getElementById('projectTags').value = data.tech_stack.join(', ');
+                }
+            }
+        }
+
+        function openEditModal(name, path, category, group, description, tags, gitUrl) {
+            document.getElementById('editName').value = name;
+            document.getElementById('editPath').value = path;
+            document.getElementById('editCategory').value = category;
+            document.getElementById('editGroup').value = group;
+            document.getElementById('editDescription').value = description;
+            document.getElementById('editTags').value = tags;
+            document.getElementById('editGitUrl').value = gitUrl;
+            document.getElementById('editForm').action = '/update/' + encodeURIComponent(name);
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function openGroupModal() {
+            document.getElementById('groupModal').style.display = 'flex';
+        }
+
+        function closeGroupModal() {
+            document.getElementById('groupModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modals = ['addModal', 'editModal', 'groupModal'];
+            modals.forEach(id => {
+                const modal = document.getElementById(id);
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

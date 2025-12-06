@@ -1,0 +1,72 @@
+<div class="project-card status-{{ project.status }}">
+    <a href="/project/{{ project.name }}" class="card-link">
+        <div class="card-header">
+            <h3>{{ project.name }}</h3>
+            <span class="category-badge">{{ project.category }}</span>
+        </div>
+    </a>
+
+    <p class="path">📂 {{ project.path }}</p>
+    <p class="description">{{ project.description }}</p>
+
+    <div class="tech-stack">
+        {% for tech in project.tech_stack %}
+        <span class="tech">{{ tech }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="tags">
+        {% for tag in project.tags %}
+        <span class="tag">{{ tag }}</span>
+        {% endfor %}
+    </div>
+
+    {% if project.git_info.is_git %}
+    <div class="git-info">
+        <div class="git-branch">
+            <span class="git-icon">⎇</span>
+            <span class="branch-name">{{ project.git_info.branch }}</span>
+            {% if project.git_info.has_changes %}
+            <span class="git-dirty">●</span>
+            {% endif %}
+        </div>
+        {% if project.git_info.last_commit %}
+        <div class="git-commit">
+            <span class="commit-msg">{{ project.git_info.last_commit }}</span>
+            <span class="commit-date">{{ project.git_info.last_commit_date }}</span>
+        </div>
+        {% endif %}
+        {% if project.git_info.remote_url %}
+        <a href="{{ project.git_info.remote_url.replace('.git', '').replace('git@github.com:', 'https://github.com/') }}" target="_blank" class="git-remote">GitHub ↗</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="status-indicator">
+        {% if project.status == 'active' %}🟢 Active
+        {% elif project.status == 'paused' %}🟡 Paused
+        {% else %}⚪ Done{% endif %}
+    </div>
+
+    <div class="card-actions">
+        <a href="/open/{{ project.name }}/vscode" class="btn btn-vscode">VS Code</a>
+        <a href="/open/{{ project.name }}/terminal" class="btn btn-terminal">Terminal</a>
+        <a href="/open/{{ project.name }}/explorer" class="btn btn-explorer">Explorer</a>
+    </div>
+
+    <div class="card-manage">
+        <form method="post" action="/update/{{ project.name }}" class="inline-form">
+            <select name="status" onchange="this.form.submit()">
+                <option value="active" {% if project.status == 'active' %}selected{% endif %}>Active</option>
+                <option value="paused" {% if project.status == 'paused' %}selected{% endif %}>Paused</option>
+                <option value="done" {% if project.status == 'done' %}selected{% endif %}>Done</option>
+            </select>
+        </form>
+        <div class="manage-buttons">
+            <button type="button" class="btn-edit" onclick="openEditModal('{{ project.name }}', '{{ project.path }}', '{{ project.category }}', '{{ project.group | default('', true) }}', '{{ project.description | e }}', '{{ project.tags | join(', ') }}', '{{ project.git_url | default('', true) }}')">✏️</button>
+            <form method="post" action="/delete/{{ project.name }}" class="inline-form">
+                <button type="submit" class="btn-delete" onclick="return confirm('Delete this project?')">🗑️</button>
+            </form>
+        </div>
+    </div>
+</div>
