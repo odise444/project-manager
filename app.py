@@ -216,7 +216,7 @@ def index():
 
     # 필터링
     category = request.args.get('category', 'all')
-    status = request.args.get('status', 'all')
+    status = request.args.get('status', 'active')
     group_filter = request.args.get('group', 'all')
     search = request.args.get('search', '').lower()
 
