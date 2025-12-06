@@ -54,14 +54,16 @@
 
         <!-- 그룹별 프로젝트 -->
         {% for group_name, group_projects in grouped_projects.items() %}
-        <div class="group-section">
+        <div class="group-section" id="group-{{ loop.index }}">
             <div class="group-header">
+                <button type="button" class="btn-toggle" onclick="toggleGroup('group-{{ loop.index }}')">▼</button>
                 <h2>📁 {{ group_name }}</h2>
+                <span class="group-count">{{ group_projects|length }}</span>
                 <form method="post" action="/delete-group/{{ group_name }}" class="inline-form">
                     <button type="submit" class="btn-delete-group" onclick="return confirm('Delete group {{ group_name }}? Projects will be ungrouped.')">🗑️</button>
                 </form>
             </div>
-            <div class="project-grid">
+            <div class="project-grid group-content">
                 {% for project in group_projects %}
                 {% include '_project_card.html' %}
                 {% endfor %}
@@ -71,11 +73,13 @@
 
         <!-- 그룹 없는 프로젝트 -->
         {% if ungrouped %}
-        <div class="group-section">
+        <div class="group-section" id="group-ungrouped">
             <div class="group-header">
+                <button type="button" class="btn-toggle" onclick="toggleGroup('group-ungrouped')">▼</button>
                 <h2>📂 Ungrouped</h2>
+                <span class="group-count">{{ ungrouped|length }}</span>
             </div>
-            <div class="project-grid">
+            <div class="project-grid group-content">
                 {% for project in ungrouped %}
                 {% include '_project_card.html' %}
                 {% endfor %}
@@ -239,6 +243,32 @@
         function closeGroupModal() {
             document.getElementById('groupModal').style.display = 'none';
         }
+
+        function toggleGroup(groupId) {
+            const section = document.getElementById(groupId);
+            const content = section.querySelector('.group-content');
+            const btn = section.querySelector('.btn-toggle');
+
+            if (section.classList.contains('collapsed')) {
+                section.classList.remove('collapsed');
+                btn.textContent = '▼';
+                localStorage.removeItem('collapsed-' + groupId);
+            } else {
+                section.classList.add('collapsed');
+                btn.textContent = '▶';
+                localStorage.setItem('collapsed-' + groupId, 'true');
+            }
+        }
+
+        // 페이지 로드시 저장된 접힘 상태 복원
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.group-section').forEach(section => {
+                if (localStorage.getItem('collapsed-' + section.id) === 'true') {
+                    section.classList.add('collapsed');
+                    section.querySelector('.btn-toggle').textContent = '▶';
+                }
+            });
+        });
 
         window.onclick = function(event) {
             const modals = ['addModal', 'editModal', 'groupModal'];

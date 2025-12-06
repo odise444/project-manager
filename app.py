@@ -390,11 +390,15 @@ def open_project(name, action):
             subprocess.Popen(f'start cmd /K "cd /d {path}"', shell=True)
         elif action == 'explorer':
             subprocess.Popen(f'explorer "{path}"', shell=True)
+        elif action == 'claude':
+            subprocess.Popen(f'start cmd /K "cd /d {path} && claude"', shell=True)
     else:
         if action == 'vscode':
             subprocess.Popen(['code', path])
         elif action == 'terminal':
             subprocess.Popen(['gnome-terminal', f'--working-directory={path}'])
+        elif action == 'claude':
+            subprocess.Popen(['gnome-terminal', '--', 'bash', '-c', f'cd "{path}" && claude; exec bash'])
     
     return redirect(url_for('index'))
 
